@@ -3,12 +3,24 @@ import { React, Component } from "react";
 class ChatWindow extends Component {
   constructor(props) {
     super(props);
-
     this.state = { messages: [] };
   }
 
-  sendMessage(e, value) {
-    this.setState((state, props) => ({ messages: [...state.messages, value] }));
+  async sendMessage(e, value) {
+    let payload = {
+      method: "POST",
+      body: JSON.stringify({ text: value }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    this.setState((state, props) => ({
+      messages: [...state.messages, value],
+    }));
+    let json = await (await fetch("/api/", payload)).json();
+    this.setState((state, props) => ({
+      messages: [...state.messages, "msg: " + json.intent.name],
+    }));
   }
 
   render() {
