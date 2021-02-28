@@ -15,4 +15,5 @@ To run this project follow these steps:
     1. ``cd webapp`` and ``npm install`` to install the frontend dependencies
     2. ``npm run build``
 1. Run the rasa backend (In another shell):
+    1. Navigate to the root folder of your rasa project 
     1. ``rasa run --verbose --enable-api`` 
