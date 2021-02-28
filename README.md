@@ -7,7 +7,8 @@ You will need a working installaton of node and python to install this project a
 To run this project follow these steps:
 1. Setup the venv:
     1. ``python -m venv venv`` to create the venv
-    2. ``venv/Scripts/activate`` (Windows) or ``source venv/bin/activate`` (UNIX based systems)
+    2. ``pip install flask requests``
+    3. ``venv/Scripts/activate`` (Windows) or ``source venv/bin/activate`` (UNIX based systems)
 1. Now, run the flask application with 
     1. ``cd server``
     2. ``python app.py`` 
