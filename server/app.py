@@ -30,3 +30,7 @@ def post_attempt():
     url = "http://localhost:5005/model/parse"
     result = rq.post(url, json=body).json()
     return result
+
+
+if __name__ == '__main__':
+    app.run()
