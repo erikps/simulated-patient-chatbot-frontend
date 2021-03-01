@@ -1,4 +1,5 @@
 import { React, Component } from "react";
+import cfg from "../config.json"
 
 class ChatWindow extends Component {
   constructor(props) {
@@ -17,9 +18,11 @@ class ChatWindow extends Component {
     this.setState((state, props) => ({
       messages: [...state.messages, value],
     }));
-    let json = await (await fetch("/api/", payload)).json();
+    
+    // Get a response from chatbot api to the message entered by the user
+    let json = await (await fetch(cfg.host, payload)).json();
     this.setState((state, props) => ({
-      messages: [...state.messages, "msg: " + json.intent.name],
+      messages: [...state.messages, "intent: " + json.intent.name],
     }));
   }
 
@@ -27,16 +30,17 @@ class ChatWindow extends Component {
     const messages = this.state.messages.map((message, index) => (
       <li key={index}>{message}</li>
     ));
-
     return (
       <div>
         <div className="d-flex flex-column align-items-center">
           <h2 className="mv-4">Chatbot</h2>
           <hr className="mb-4" style={{ width: "40%" }} />
         </div>
-        <div className="container w-50">
+        <div className="container w-50 d-flex flex-column justify-content-end h-100">
           <div className="d-flex flex-column align-items-center">
             <ul>{messages}</ul>
+          </div>
+          <div className="flex-shrink-1">
             <ChatInput onSubmit={(e, value) => this.sendMessage(e, value)} />
           </div>
         </div>
