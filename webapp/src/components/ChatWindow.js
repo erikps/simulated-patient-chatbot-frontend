@@ -1,6 +1,7 @@
 import { React, Component } from "react";
-import cfg from "../config.json"
+import cfg from "../config.json";
 
+// The chat window, including the previous messages and the chat text input.
 class ChatWindow extends Component {
   constructor(props) {
     super(props);
@@ -18,8 +19,8 @@ class ChatWindow extends Component {
     this.setState((state, props) => ({
       messages: [...state.messages, value],
     }));
-    
-    // Get a response from chatbot api to the message entered by the user
+
+    // Get a response from chatbot api to the message entered by the user.
     let json = await (await fetch(cfg.host, payload)).json();
     this.setState((state, props) => ({
       messages: [...state.messages, "intent: " + json.intent.name],
@@ -49,6 +50,7 @@ class ChatWindow extends Component {
   }
 }
 
+// This component represents the chat input where the user can type messages.
 class ChatInput extends Component {
   constructor(props) {
     super(props);
