@@ -6,6 +6,7 @@ import uuid
 app = Flask(__name__, template_folder='../webapp/build')
 CORS(app)
 
+
 @app.route('/')
 def index():
     return redirect('app')
@@ -25,12 +26,14 @@ def serve_static(path):
 def post_attempt():
     data = request.get_json()
     body = {
-        "text": data['text'],
-        "message_id": str(uuid.uuid4())
+        "sender": data['sender'],
+        "message": data['message']
     }
-    url = "http://localhost:5005/model/parse"
+    # url = "http://localhost:5005/model/parse"
+    url = "http://localhost:5005/webhooks/rest/webhook"
     result = rq.post(url, json=body).json()
-    return result
+
+    return {'body': result}
 
 
 if __name__ == '__main__':

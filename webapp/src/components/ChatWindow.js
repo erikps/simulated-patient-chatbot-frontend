@@ -8,10 +8,14 @@ class ChatWindow extends Component {
     this.state = { messages: [] };
   }
 
+  parseResponse(action) {
+    return action.text;
+  }
+
   async sendMessage(e, value) {
     let payload = {
       method: "POST",
-      body: JSON.stringify({ text: value }),
+      body: JSON.stringify({ message: value, sender: "test_user" }),
       headers: {
         "Content-Type": "application/json",
       },
@@ -21,9 +25,9 @@ class ChatWindow extends Component {
     }));
 
     // Get a response from chatbot api to the message entered by the user.
-    let json = await (await fetch(cfg.host, payload)).json();
+    let result = await (await fetch(cfg.host, payload)).json();
     this.setState((state, props) => ({
-      messages: [...state.messages, "intent: " + json.intent.name],
+      messages: [...state.messages, ...result.body.map(this.parseResponse)],
     }));
   }
 
