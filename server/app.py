@@ -29,7 +29,6 @@ def post_attempt():
         "sender": data['sender'],
         "message": data['message']
     }
-    # url = "http://localhost:5005/model/parse"
     url = "http://localhost:5005/webhooks/rest/webhook"
     result = rq.post(url, json=body).json()
 
