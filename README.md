@@ -8,7 +8,7 @@ To run this project follow these steps:
 1. Setup the venv:
     1. ``python -m venv venv`` to create the venv
     1. ``venv/Scripts/activate`` (Windows) or ``source venv/bin/activate`` (UNIX based systems)
-    1. ``pip install -r requirements.txt`
+    1. ``pip install -r requirements.txt``
 1. Now, run the flask application with 
     1. ``cd server``
     1. ``python app.py`` 
