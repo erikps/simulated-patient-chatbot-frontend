@@ -19,3 +19,5 @@ To run this project follow these steps:
 1. Run the rasa backend (In another shell):
    1. Navigate to the root folder of your rasa project
    1. Run `rasa run` which starts up the chatbot api.
+   1. Run `rasa run actions` in another shell which starts an action server that executes all the custom actions.
+
