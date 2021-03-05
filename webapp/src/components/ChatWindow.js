@@ -1,5 +1,6 @@
 import { React, Component } from "react";
-import cfg from "../config.json";
+
+const apiEndpoint = process.env.REACT_APP_API_ENDPOINT;
 
 async function sendMessage(message) {
   const payload = {
@@ -10,7 +11,7 @@ async function sendMessage(message) {
     },
   };
 
-  return await (await fetch(cfg.host, payload)).json();
+  return await (await fetch(apiEndpoint, payload)).json();
 }
 
 class Message extends Component {
@@ -24,14 +25,36 @@ class Message extends Component {
     if (this.props.action.buttons) {
       buttons = this.props.action.buttons.map(({ payload, title }) => (
         <td>
-          <button
-            type="button"
-            className="btn btn-primary btn-sm"
-          >
+          <button type="button" className="btn btn-primary btn-sm">
             {title}
           </button>
         </td>
       ));
+    }
+
+    let score = <></>;
+    if (this.props.action?.custom?.score) {
+      score = (
+        <table>
+          <tbody>
+            {this.props.action.custom.score.individualScores.map(
+              ({ explanation, scoreAchieved, scorePossible }, index) => (
+                <tr key={index}>
+                  <td>{explanation}</td>
+                  <td>
+                    {scoreAchieved}/{scorePossible}
+                  </td>
+                </tr>
+              )
+            )}
+            <tr>
+              <td>Total Score</td>
+              {this.props.action.custom.score.totalScore}/
+              {this.props.action.custom.score.totalMaxScore}
+            </tr>
+          </tbody>
+        </table>
+      );
     }
 
     return (
@@ -44,6 +67,7 @@ class Message extends Component {
         <td>{this.props.isUserMessage ? "user:\u2002" : "bot:\u2002"}</td>
         <td>{this.props.action.text}</td>
         {buttons}
+        {score}
       </tr>
     );
   }
