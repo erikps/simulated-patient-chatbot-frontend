@@ -9,7 +9,7 @@ To run this project follow these steps:
 1. Setup the venv:
    1. Run `python -m venv venv` to create the venv.
    1. `venv/Scripts/activate` (Windows) or `source venv/bin/activate` (UNIX based systems)
-   1. ``pip install -r requirements.txt`
+   1. `pip install -r requirements.txt`
 1. Now, run the flask application with
    1. `cd server`
    1. `python app.py`
@@ -19,3 +19,5 @@ To run this project follow these steps:
 1. Run the rasa backend (In another shell):
    1. Navigate to the root folder of your rasa project
    1. Run `rasa run` which starts up the chatbot api.
+   1. Run `rasa run actions` in another shell which starts an action server that executes all the custom actions.
+
