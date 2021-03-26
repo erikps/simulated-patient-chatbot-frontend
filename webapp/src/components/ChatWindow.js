@@ -1,4 +1,6 @@
 import { React, Component } from "react";
+import { parseResponse } from "./messages/Response";
+import UserMessage from "./messages/UserMessage";
 
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT;
 
@@ -14,65 +16,6 @@ async function sendMessage(message) {
   return await (await fetch(apiEndpoint, payload)).json();
 }
 
-class Message extends Component {
-  constructor(props) {
-    super(props);
-    console.log(this.props.action);
-  }
-
-  render() {
-    let buttons = [];
-    if (this.props.action.buttons) {
-      buttons = this.props.action.buttons.map(({ payload, title }) => (
-        <td>
-          <button type="button" className="btn btn-primary btn-sm">
-            {title}
-          </button>
-        </td>
-      ));
-    }
-
-    let score = <></>;
-    if (this.props.action?.custom?.score) {
-      score = (
-        <table>
-          <tbody>
-            {this.props.action.custom.score.individualScores.map(
-              ({ explanation, scoreAchieved, scorePossible }, index) => (
-                <tr key={index}>
-                  <td>{explanation}</td>
-                  <td>
-                    {scoreAchieved}/{scorePossible}
-                  </td>
-                </tr>
-              )
-            )}
-            <tr>
-              <td>Total Score</td>
-              {this.props.action.custom.score.totalScore}/
-              {this.props.action.custom.score.totalMaxScore}
-            </tr>
-          </tbody>
-        </table>
-      );
-    }
-
-    return (
-      <tr
-        className="w-100 pb-3"
-        style={{
-          backgroundColor: this.props.isUserMessage ? "white" : "lightgreen",
-        }}
-      >
-        <td>{this.props.isUserMessage ? "user:\u2002" : "bot:\u2002"}</td>
-        <td>{this.props.action.text}</td>
-        {buttons}
-        {score}
-      </tr>
-    );
-  }
-}
-
 // The chat window, including the previous messages and the chat text input.
 class ChatWindow extends Component {
   constructor(props) {
@@ -81,30 +24,33 @@ class ChatWindow extends Component {
   }
 
   async sendMessage(e, value) {
+    // Add user message
     this.setState((state, props) => ({
       messages: [
         ...state.messages,
-        <Message
-          action={{ text: value }}
-          key={state.messageCount}
-          isUserMessage={true}
-        />,
+        <div className="align-self-end">
+          <UserMessage text={value} key={state.messageCount} />
+        </div>,
       ],
       messageCount: (state.messageCount += 1),
     }));
 
     // Get a response from chatbot api to the message entered by the user.
     let result = await sendMessage(value);
+
+    // Add bot response to chat window
     this.setState((state, props) => ({
       messages: [
         ...state.messages,
-        ...result.body.map((action, index) => (
-          <Message
-            action={action}
-            key={state.messageCount + index}
-            isUserMessage={false}
-          />
-        )),
+        ...result.body.map(
+          (action, index) => parseResponse(action, () => this.sendMessage)
+          // <Response
+          //   action={action}
+          //   key={state.messageCount + index}
+          //   isUserMessage={false}
+          //   sendMessage={(payload) => this.sendMessage(payload)}
+          // />
+        ),
       ],
       messageCount: (state.messageCount += result.body.length),
     }));
@@ -117,14 +63,17 @@ class ChatWindow extends Component {
           <h2 className="mv-4">Chatbot</h2>
           <hr className="mb-4" style={{ width: "40%" }} />
         </div>
-        <div className="container w-50 d-flex flex-column justify-content-end h-100">
-          <div className="">
-            <table className="w-100 table-fit">
-              <tbody>{this.state.messages}</tbody>
-            </table>
+        <div className="container d-flex flex-column align-items-center">
+          <div className="d-flex flex-column w-50 chat-window">
+            {this.state.messages}
           </div>
-          <div className="mt-4">
-            <ChatInput onSubmit={(e, value) => this.sendMessage(e, value)} />
+          <div className="spacer">
+            {/* This element is there to have some space on the bottom */}
+          </div>
+          <div className="lower-half d-flex flex-column align-items-center justify-items start">
+            <div className="chat-input mt-1">
+              <ChatInput onSubmit={(e, value) => this.sendMessage(e, value)} />
+            </div>
           </div>
         </div>
       </div>
@@ -161,7 +110,7 @@ class ChatInput extends Component {
     return (
       <form onSubmit={this.handleSubmit}>
         <input
-          className="form-control"
+          className="mx-2"
           type="text"
           value={this.state.value}
           onChange={this.handleChange}

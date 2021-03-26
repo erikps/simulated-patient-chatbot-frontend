@@ -1,4 +1,4 @@
-table.table-fit {
+/* table.table-fit {
     width: auto !important;
     table-layout: auto !important;
 }
@@ -7,4 +7,63 @@ table.table-fit thead th, table.table-fit tfoot th {
 }
 table.table-fit tbody td, table.table-fit tfoot td {
     width: auto !important;
+} */
+
+.chat-window {
+  font-size: 1em;
+  /* background-color: cyan; */
+  height: 100%;
+}
+
+.lower-half {
+  bottom: 0;
+  height: 10%;
+  width: 100%;
+  background-color: white;
+  position: fixed;
+}
+
+.spacer {
+  height: 10vh;
+  width: 100%;
+  
+  /* background-color: red; */
+}
+
+.chat-input {
+  max-width: 400em;
+  /* width: 0; */
+}
+
+.chat-input input[type="text"] {
+  border: none;
+  width: 100%;
+  border-radius: 25px;
+  background-color: rgb(233, 233, 233);
+  height: 100%;
+  padding: 0.5em 1em;
+  margin: 0.1em;
+  box-sizing: border-box;
+  /* font-size: .5em; */
+}
+
+.chat-input input[type="text"]:focus {
+  outline: none;
+}
+
+.message-background {
+  border-radius: 2em;
+  padding: 0.25em 1rem;
+  display: inline-flex;
+  margin: 0.25em 0 0.25em 0;
+}
+
+.user-message {
+  background-color: rgb(0, 132, 255);
+  color: white;
+}
+
+.bot-response {
+  background-color: rgb(228, 230, 235);
+  align-self: flex-start;
 }
