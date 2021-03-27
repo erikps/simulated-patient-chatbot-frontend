@@ -99,7 +99,9 @@ class ChatInput extends Component {
   }
 
   handleSubmit(event) {
-    if (this.props.onSubmit) {
+    if (!this.state.value)
+      alert("Type something")
+    else if (this.props.onSubmit) {
       this.props.onSubmit(event, this.state.value);
     }
     this.setState({ value: "" });
@@ -110,11 +112,12 @@ class ChatInput extends Component {
     return (
       <form onSubmit={this.handleSubmit}>
         <input
-          className="mx-2"
+          className="mx-1"
           type="text"
           value={this.state.value}
           onChange={this.handleChange}
         />
+        
       </form>
     );
   }
