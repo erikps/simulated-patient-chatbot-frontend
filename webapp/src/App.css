@@ -31,7 +31,7 @@ table.table-fit tbody td, table.table-fit tfoot td {
 }
 
 .chat-input {
-  max-width: 400em;
+  width: 600px;
   /* width: 0; */
 }
 

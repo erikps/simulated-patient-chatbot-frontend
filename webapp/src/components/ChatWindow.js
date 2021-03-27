@@ -115,7 +115,7 @@ class ChatInput extends Component {
           className="mx-1"
           type="text"
           value={this.state.value}
-          onChange={this.handleChange}
+          onChange={this.handleChange} 
         />
         
       </form>
