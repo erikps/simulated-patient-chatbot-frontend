@@ -110,15 +110,20 @@ class ChatInput extends Component {
 
   render() {
     return (
-      <form onSubmit={this.handleSubmit}>
-        <input
-          className="mx-1"
-          type="text"
-          value={this.state.value}
-          onChange={this.handleChange} 
-        />
-        
-      </form>
+        <form onSubmit={this.handleSubmit}>
+          <input
+            className="mx-1"
+            type="text"
+            value={this.state.value}
+            onChange={this.handleChange} 
+            autoFocus
+          />
+          <button
+          type="submit">Submit</button>
+          
+          
+        </form>
+      
     );
   }
 }
