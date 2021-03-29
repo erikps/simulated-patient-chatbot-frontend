@@ -4,7 +4,7 @@ import requests as rq
 import uuid
 import os
 
-app = Flask(__name__, template_folder='../webapp/build')
+app = Flask(__name__, template_folder='static')
 CORS(app)
 
 
@@ -20,7 +20,8 @@ def serve_webapp():
 
 @app.route('/app/<path:path>')
 def serve_static(path):
-    return send_from_directory('../webapp/build', path)
+    """ Sending the  """
+    return send_from_directory('static', path)
 
 
 @app.route("/api/", methods=['POST'])
