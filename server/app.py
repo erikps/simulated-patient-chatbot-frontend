@@ -17,13 +17,6 @@ def index():
 def serve_webapp():
     return render_template('index.html')
 
-
-@app.route('/app/<path:path>')
-def serve_static(path):
-    """ Sending the  """
-    return send_from_directory('static', path)
-
-
 @app.route("/api/", methods=['POST'])
 def post_attempt():
     data = request.get_json()
