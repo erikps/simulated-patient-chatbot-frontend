@@ -99,8 +99,8 @@ class ChatInput extends Component {
   }
 
   handleSubmit(event) {
-    if (!this.state.value)
-      alert("Type something")
+    if (!this.state.value);
+      // alert("Type something")
     else if (this.props.onSubmit) {
       this.props.onSubmit(event, this.state.value);
     }
@@ -110,7 +110,8 @@ class ChatInput extends Component {
 
   render() {
     return (
-        <form onSubmit={this.handleSubmit}>
+        
+        <form className="d-flex" onSubmit={this.handleSubmit}>
           <input
             className="mx-1"
             type="text"
@@ -118,8 +119,8 @@ class ChatInput extends Component {
             onChange={this.handleChange} 
             autoFocus
           />
-          <button
-          type="submit">Submit</button>
+          <button className="btn btn-sm btn-outline-primary"
+          type="submit"><b>SEND</b></button>
           
           
         </form>
