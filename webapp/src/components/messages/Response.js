@@ -7,7 +7,7 @@ export function parseResponse(action, sendMessageCallback) {
   let buttons = <></>;
   if (action.buttons) {
     buttons = (
-      <div className="bot-response">
+      <div>
         {action.buttons.map(({ payload, title }) => (
           <ButtonResponse onClick={() => sendMessageCallback()} title={title} />
         ))}
@@ -28,9 +28,9 @@ export function parseResponse(action, sendMessageCallback) {
   }
   return (
     <>
-      {buttons}
-      {score}
       {text}
+      {score}
+      {buttons}
     </>
   );
 }
@@ -44,7 +44,7 @@ class ButtonResponse extends Component {
     return (
       <input
         type="button"
-        className="btn btn-primary"
+        className="btn btn-primary mx-1"
         onClick={() => this.props.onClick()}
         value={this.props.title}
       />

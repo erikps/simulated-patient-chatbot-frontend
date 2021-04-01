@@ -100,8 +100,8 @@ class ChatInput extends Component {
 
   handleSubmit(event) {
     if (!this.state.value);
-      // alert("Type something")
     else if (this.props.onSubmit) {
+      // alert("Type something")
       this.props.onSubmit(event, this.state.value);
     }
     this.setState({ value: "" });
@@ -110,21 +110,19 @@ class ChatInput extends Component {
 
   render() {
     return (
-        
-        <form className="d-flex" onSubmit={this.handleSubmit}>
-          <input
-            className="mx-1"
-            type="text"
-            value={this.state.value}
-            onChange={this.handleChange} 
-            autoFocus
-          />
-          <button className="btn btn-sm btn-outline-primary"
-          type="submit"><b>SEND</b></button>
-          
-          
-        </form>
-      
+      <form className="d-flex" onSubmit={this.handleSubmit}>
+        <input
+          className="mx-1"
+          placeholder="Aa"
+          type="text"
+          value={this.state.value}
+          onChange={this.handleChange}
+          autoFocus
+        />
+        <button className="btn btn-sm btn-outline-primary" type="submit">
+          <b>SEND</b>
+        </button>
+      </form>
     );
   }
 }
