@@ -60,18 +60,18 @@ class ChatWindow extends Component {
     return (
       <div>
         <div className="d-flex flex-column align-items-center">
-          <h2 className="mv-4">Chatbot</h2>
-          <hr className="mb-4" style={{ width: "40%" }} />
+          <h2 className="mv-4 mt-2">Chatbot</h2>
+          <hr className="mb-4 separator" />
         </div>
         <div className="container d-flex flex-column align-items-center">
-          <div className="d-flex flex-column w-50 chat-window">
+          <div className="d-flex flex-column chat-window">
             {this.state.messages}
           </div>
           <div className="spacer">
             {/* This element is there to have some space on the bottom */}
           </div>
           <div className="lower-half d-flex flex-column align-items-center justify-items start">
-            <div className="chat-input mt-1">
+            <div className="container-md chat-input mt-1">
               <ChatInput onSubmit={(e, value) => this.sendMessage(e, value)} />
             </div>
           </div>
