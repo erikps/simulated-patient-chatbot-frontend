@@ -7,7 +7,7 @@ export class TextMessage extends Component {
 
   render() {
     return (
-      <div className={"message-background " + this.props.className}>
+      <div className={"message-background rounded-pill px-2 py-1 m-1 " + this.props.className}>
         {this.props.text}
       </div>
     );

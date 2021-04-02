@@ -43,13 +43,8 @@ class ChatWindow extends Component {
       messages: [
         ...state.messages,
         ...result.body.map(
-          (action, index) => parseResponse(action, () => this.sendMessage)
-          // <Response
-          //   action={action}
-          //   key={state.messageCount + index}
-          //   isUserMessage={false}
-          //   sendMessage={(payload) => this.sendMessage(payload)}
-          // />
+          (action, index) =>
+            parseResponse(action, (value) => this.sendMessage(null, value))
         ),
       ],
       messageCount: (state.messageCount += result.body.length),

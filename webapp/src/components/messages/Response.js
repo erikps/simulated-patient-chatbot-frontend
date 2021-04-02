@@ -9,7 +9,7 @@ export function parseResponse(action, sendMessageCallback) {
     buttons = (
       <div>
         {action.buttons.map(({ payload, title }) => (
-          <ButtonResponse onClick={() => sendMessageCallback()} title={title} />
+          <ButtonResponse onClick={() => sendMessageCallback(payload)} title={title} />
         ))}
       </div>
     );
@@ -24,7 +24,12 @@ export function parseResponse(action, sendMessageCallback) {
   }
   let text = <></>;
   if (action.text) {
-    text = <TextMessage className="bot-response" text={action.text} />;
+    text = (
+      <div className="d-flex flex-row">
+        <ReportButton />
+        <TextMessage className="bot-response" text={action.text} />
+      </div>
+    );
   }
   return (
     <>
@@ -33,6 +38,18 @@ export function parseResponse(action, sendMessageCallback) {
       {buttons}
     </>
   );
+}
+
+class ReportButton extends Component {
+  render() {
+    return (
+      <div className="me-1">
+        <button type="button" className="btn btn-sm btn-warning" style={{"position": "relative"}}>
+          <b>REPORT </b>
+        </button>
+      </div>
+    );
+  }
 }
 
 class ButtonResponse extends Component {
@@ -76,7 +93,10 @@ class ScoreResponse extends Component {
                 )}
                 <tr>
                   <td>Total Score</td>
-                  <td>{this.props.score.totalScore}/{this.props.score.totalMaxScore}</td>
+                  <td>
+                    {this.props.score.totalScore}/
+                    {this.props.score.totalMaxScore}
+                  </td>
                 </tr>
               </tbody>
             </table>

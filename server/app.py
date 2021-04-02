@@ -17,15 +17,30 @@ def index():
 def serve_webapp():
     return render_template('index.html')
 
-@app.route("/api/", methods=['POST'])
-def post_attempt():
+
+@app.route('/api/history/', methods=['GET'])
+def get_conversation_history():
+    """ Get the current state / history of the conversation to enable reloading the webpage. """
+    sender_id = request.get_json()['sender']
+
+    url = f'http://localhost:5005/conversations/{sender_id}/tracker'
+    result = rq.get(url)
+    print(result)
+
+
+@app.route('/api/', methods=['POST'])
+def post_message():
+    """ Post a new message and get response from webserver. """
     data = request.get_json()
+
     body = {
-        "sender": data['sender'],
-        "message": data['message']
+        'sender': data['sender'],
+        'message': data['message']
     }
-    url = "http://localhost:5005/webhooks/rest/webhook"
+    url = 'http://localhost:5005/webhooks/rest/webhook'
     result = rq.post(url, json=body).json()
+
+    print(result)
 
     return {'body': result}
 
