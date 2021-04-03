@@ -9,7 +9,7 @@ export class TextMessage extends Component {
     return (
       <div
         className={
-          "message-background px-2 py-1 m-1 " + this.props.className
+          "message-background px-2 py-1 " + this.props.className
         }
       >
         {this.props.text}

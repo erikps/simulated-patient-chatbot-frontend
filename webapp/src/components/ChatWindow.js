@@ -35,7 +35,7 @@ class ChatWindow extends Component {
     this.setState((state, props) => ({
       messages: [
         ...state.messages,
-        <div className="align-self-end">
+        <div className="align-self-end user-item">
           <UserMessage text={text} key={state.messageCount} />
         </div>,
       ],

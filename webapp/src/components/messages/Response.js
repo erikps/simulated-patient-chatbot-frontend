@@ -7,7 +7,7 @@ export function parseResponse(action, sendMessageCallback) {
   let buttons = <></>;
   if (action?.quick_replies) {
     buttons = (
-      <div>
+      <div className="bot-item d-inline-flex flex-row justify-content-start">
         {action.quick_replies.map(({ payload, title }) => (
           <ButtonResponse
             onClick={() => sendMessageCallback(payload)}
@@ -20,7 +20,7 @@ export function parseResponse(action, sendMessageCallback) {
   let score = <></>;
   if (action?.score) {
     score = (
-      <div className="bot-response">
+      <div className="bot-response bot-item">
         <ScoreResponse score={action.score} />
       </div>
     );
@@ -28,9 +28,11 @@ export function parseResponse(action, sendMessageCallback) {
   let text = <></>;
   if (action?.text) {
     text = (
-      <div className="d-flex flex-row">
-        <ReportButton />
+      <div className="d-flex flex-row align-items-start  bot-item justify-content-start">
         <TextMessage className="bot-response" text={action.text} />
+        <div class="">
+          <ReportButton />
+        </div>
       </div>
     );
   }
@@ -46,13 +48,9 @@ export function parseResponse(action, sendMessageCallback) {
 class ReportButton extends Component {
   render() {
     return (
-      <div className="me-1">
-        <button
-          type="button"
-          className="btn btn-sm btn-warning"
-          style={{ position: "relative" }}
-        >
-          <b>REPORT </b>
+      <div className="">
+        <button className="btn btn-sm btn-outline-danger mx-1">
+          <b>REPORT</b>
         </button>
       </div>
     );
@@ -68,7 +66,7 @@ class ButtonResponse extends Component {
     return (
       <input
         type="button"
-        className="btn btn-primary mx-1"
+        className="btn btn-primary me-2"
         onClick={() => this.props.onClick()}
         value={this.props.title}
       />
