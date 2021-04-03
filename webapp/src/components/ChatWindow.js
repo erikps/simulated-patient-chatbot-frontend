@@ -1,8 +1,10 @@
 import { React, Component } from "react";
 import { parseResponse } from "./messages/Response";
+import socketIoClient from "socket.io-client";
 import UserMessage from "./messages/UserMessage";
+import SocketConnection from "./SocketConnection";
 
-const apiEndpoint = process.env.REACT_APP_API_ENDPOINT;
+const ENDPOINT = process.env.REACT_APP_API_ENDPOINT;
 
 async function sendMessage(message) {
   const payload = {
@@ -13,42 +15,50 @@ async function sendMessage(message) {
     },
   };
 
-  return await (await fetch(apiEndpoint, payload)).json();
+  return await (await fetch(ENDPOINT + "api", payload)).json();
 }
 
 // The chat window, including the previous messages and the chat text input.
 class ChatWindow extends Component {
   constructor(props) {
     super(props);
-    this.state = { messages: [], messageCount: 0 };
+    this.state = {
+      messages: [],
+    };
+    this.connection = new SocketConnection(
+      (x) => this.addBotMessage(x),
+      "test_sender"
+    );
   }
 
-  async sendMessage(e, value) {
-    // Add user message
+  addUserMessage(text) {
     this.setState((state, props) => ({
       messages: [
         ...state.messages,
         <div className="align-self-end">
-          <UserMessage text={value} key={state.messageCount} />
+          <UserMessage text={text} key={state.messageCount} />
         </div>,
       ],
-      messageCount: (state.messageCount += 1),
     }));
+  }
 
-    // Get a response from chatbot api to the message entered by the user.
-    let result = await sendMessage(value);
-
-    // Add bot response to chat window
+  addBotMessage(message) {
+    console.log(message);
     this.setState((state, props) => ({
       messages: [
         ...state.messages,
-        ...result.body.map(
-          (action, index) =>
-            parseResponse(action, (value) => this.sendMessage(null, value))
-        ),
+        parseResponse(message, (value) => this.sendMessage(value)),
       ],
-      messageCount: (state.messageCount += result.body.length),
     }));
+  }
+
+  async sendMessage(value) {
+    // Send the provided method and also
+    this.addUserMessage(value);
+
+    this.connection.sendMessage(value);
+    // let result = await sendMessage(value);
+    // this.addBotMessage(result);
   }
 
   render() {
@@ -67,7 +77,7 @@ class ChatWindow extends Component {
           </div>
           <div className="lower-half d-flex flex-column align-items-center justify-items start">
             <div className="container-md chat-input mt-1">
-              <ChatInput onSubmit={(e, value) => this.sendMessage(e, value)} />
+              <ChatInput onSubmit={(_e, value) => this.sendMessage(value)} />
             </div>
           </div>
         </div>

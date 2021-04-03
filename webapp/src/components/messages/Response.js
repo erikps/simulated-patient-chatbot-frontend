@@ -5,25 +5,28 @@ import { TextMessage } from "./TextMessage";
 // return a list of responses such as texts, buttons, etc. that are ready to be displayed.
 export function parseResponse(action, sendMessageCallback) {
   let buttons = <></>;
-  if (action.buttons) {
+  if (action?.quick_replies) {
     buttons = (
       <div>
-        {action.buttons.map(({ payload, title }) => (
-          <ButtonResponse onClick={() => sendMessageCallback(payload)} title={title} />
+        {action.quick_replies.map(({ payload, title }) => (
+          <ButtonResponse
+            onClick={() => sendMessageCallback(payload)}
+            title={title}
+          />
         ))}
       </div>
     );
   }
   let score = <></>;
-  if (action?.custom?.score) {
+  if (action?.score) {
     score = (
       <div className="bot-response">
-        <ScoreResponse score={action.custom.score} />
+        <ScoreResponse score={action.score} />
       </div>
     );
   }
   let text = <></>;
-  if (action.text) {
+  if (action?.text) {
     text = (
       <div className="d-flex flex-row">
         <ReportButton />
@@ -44,7 +47,11 @@ class ReportButton extends Component {
   render() {
     return (
       <div className="me-1">
-        <button type="button" className="btn btn-sm btn-warning" style={{"position": "relative"}}>
+        <button
+          type="button"
+          className="btn btn-sm btn-warning"
+          style={{ position: "relative" }}
+        >
           <b>REPORT </b>
         </button>
       </div>
