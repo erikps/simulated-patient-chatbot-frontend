@@ -1,4 +1,4 @@
-import { React, Component } from "react";
+import React, { Component } from "react";
 import { parseResponse } from "./messages/Response";
 import UserMessage from "./messages/UserMessage";
 import SocketConnection from "./SocketConnection";
@@ -18,10 +18,14 @@ class ChatWindow extends Component {
       messages: [],
       usable: false,
     };
-    this.connection = new SocketConnection(
-      (x) => this.addBotMessage(x),
-      "test_sender"
-    );
+    this.connection = new SocketConnection((x) => this.addBotMessage(x));
+    this.chatEnd = React.createRef();
+  }
+
+  scrollDown() {
+    // Ignore call while page is loading
+    if (!this.chatEnd) return;
+    this.chatEnd.current?.scrollIntoView();
   }
 
   addUserMessage(text) {
@@ -34,6 +38,7 @@ class ChatWindow extends Component {
         </div>,
       ],
     }));
+    this.scrollDown();
   }
 
   /**
@@ -48,13 +53,19 @@ class ChatWindow extends Component {
         parseResponse(message, (value) => this.sendMessage(value)),
       ],
     }));
+    this.scrollDown();
   }
 
   /**
    * Load the conversation history from the server via HTTP.
    * Overrides messages state to contain all historic messages.
    */
-  async restoreHistory() {
+  async restoreConversationHistory() {
+    this.setState((state) => ({
+      ...state,
+      usable: false,
+    }));
+
     // TODO: implement
     const messages = (await getHistory(this.connection.sessionId)).body;
 
@@ -81,7 +92,7 @@ class ChatWindow extends Component {
   }
 
   componentDidMount() {
-    this.restoreHistory();
+    this.restoreConversationHistory();
   }
 
   render() {
@@ -90,13 +101,13 @@ class ChatWindow extends Component {
         <div className="d-flex flex-column chat-window">
           {this.state.messages}
         </div>
-        <div className="spacer">
+        <div ref={this.chatEnd} className="spacer">
           {/* This element is there to have some space on the bottom */}
         </div>
       </div>
     ) : (
-      <div class="spinner-border" role="status">
-        <span class="visually-hidden">Loading...</span>
+      <div className="spinner-border" role="status">
+        <span className="visually-hidden">Loading...</span>
       </div>
     );
 

@@ -12,11 +12,13 @@ class SocketConnection {
 
   sessionId;
 
-  constructor(onMessageReceived, sessionId = null) {
+  constructor(onMessageReceived) {
     // If no value for the sessionId is provided, generate a random uuid.
 
+    let sessionId = localStorage.getItem("senderId");
     if (!sessionId) {
       sessionId = uuidV4();
+      localStorage.setItem("senderId", sessionId);
     }
 
     this.sessionId = sessionId;
