@@ -1,21 +1,13 @@
 import { React, Component } from "react";
 import { parseResponse } from "./messages/Response";
-import socketIoClient from "socket.io-client";
 import UserMessage from "./messages/UserMessage";
 import SocketConnection from "./SocketConnection";
+import ChatInput from "./ChatInput";
 
-const ENDPOINT = process.env.REACT_APP_API_ENDPOINT;
-
-async function sendMessage(message) {
-  const payload = {
-    method: "POST",
-    body: JSON.stringify({ message, sender: "test_user" }),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  };
-
-  return await (await fetch(ENDPOINT + "api", payload)).json();
+async function getHistory(senderId) {
+  return await (
+    await fetch("http://localhost:5000/api/history/" + senderId)
+  ).json();
 }
 
 // The chat window, including the previous messages and the chat text input.
@@ -24,6 +16,7 @@ class ChatWindow extends Component {
     super(props);
     this.state = {
       messages: [],
+      usable: false,
     };
     this.connection = new SocketConnection(
       (x) => this.addBotMessage(x),
@@ -32,7 +25,8 @@ class ChatWindow extends Component {
   }
 
   addUserMessage(text) {
-    this.setState((state, props) => ({
+    this.setState((state) => ({
+      ...state,
       messages: [
         ...state.messages,
         <div className="align-self-end user-item">
@@ -42,9 +36,13 @@ class ChatWindow extends Component {
     }));
   }
 
+  /**
+   * Adds 'message' as a bot response.
+   */
   addBotMessage(message) {
     console.log(message);
-    this.setState((state, props) => ({
+    this.setState((state) => ({
+      ...state,
       messages: [
         ...state.messages,
         parseResponse(message, (value) => this.sendMessage(value)),
@@ -52,82 +50,72 @@ class ChatWindow extends Component {
     }));
   }
 
-  async sendMessage(value) {
-    // Send the provided method and also
-    this.addUserMessage(value);
+  /**
+   * Load the conversation history from the server via HTTP.
+   * Overrides messages state to contain all historic messages.
+   */
+  async restoreHistory() {
+    // TODO: implement
+    const messages = (await getHistory(this.connection.sessionId)).body;
 
+    console.log(messages);
+
+    for (const message of messages) {
+      if (message.event === "bot") this.addBotMessage(message);
+      else if (message.event === "user") this.addUserMessage(message.text);
+    }
+
+    this.setState((state) => ({
+      ...state,
+      usable: true,
+    }));
+  }
+
+  /**
+   * Send 'value' as a message via the socketio connection.
+   */
+
+  sendMessage(value) {
+    this.addUserMessage(value);
     this.connection.sendMessage(value);
-    // let result = await sendMessage(value);
-    // this.addBotMessage(result);
+  }
+
+  componentDidMount() {
+    this.restoreHistory();
   }
 
   render() {
+    const content = this.state.usable ? (
+      <div className="container d-flex flex-column align-items-center">
+        <div className="d-flex flex-column chat-window">
+          {this.state.messages}
+        </div>
+        <div className="spacer">
+          {/* This element is there to have some space on the bottom */}
+        </div>
+      </div>
+    ) : (
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    );
+
     return (
       <div>
         <div className="d-flex flex-column align-items-center">
           <h2 className="mv-4 mt-2">Chatbot</h2>
           <hr className="mb-4 separator" />
-        </div>
-        <div className="container d-flex flex-column align-items-center">
-          <div className="d-flex flex-column chat-window">
-            {this.state.messages}
-          </div>
-          <div className="spacer">
-            {/* This element is there to have some space on the bottom */}
-          </div>
+          {content}
           <div className="lower-half d-flex flex-column align-items-center justify-items start">
             <div className="container-md chat-input mt-1">
-              <ChatInput onSubmit={(_e, value) => this.sendMessage(value)} />
+              <ChatInput
+                disabled={!this.state.usable}
+                onSubmit={(_e, value) => this.sendMessage(value)}
+              />
             </div>
           </div>
         </div>
       </div>
-    );
-  }
-}
-
-// This component represents the chat input where the user can type messages.
-class ChatInput extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { value: "" };
-
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-
-  handleChange(event) {
-    this.setState({ value: event.target.value });
-    if (this.props.onChange) {
-      this.props.onChange(event, event.target.value);
-    }
-  }
-
-  handleSubmit(event) {
-    if (!this.state.value);
-    else if (this.props.onSubmit) {
-      // alert("Type something")
-      this.props.onSubmit(event, this.state.value);
-    }
-    this.setState({ value: "" });
-    event.preventDefault();
-  }
-
-  render() {
-    return (
-      <form className="d-flex" onSubmit={this.handleSubmit}>
-        <input
-          className="mx-1"
-          placeholder="Aa"
-          type="text"
-          value={this.state.value}
-          onChange={this.handleChange}
-          autoFocus
-        />
-        <button className="btn btn-sm btn-outline-primary" type="submit">
-          <b>SEND</b>
-        </button>
-      </form>
     );
   }
 }

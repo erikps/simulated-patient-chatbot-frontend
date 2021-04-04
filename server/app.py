@@ -4,6 +4,7 @@ import requests as rq
 import uuid
 import os
 
+
 app = Flask(__name__, template_folder='static')
 CORS(app)
 
@@ -18,14 +19,33 @@ def serve_webapp():
     return render_template('index.html')
 
 
-@app.route('/api/history/', methods=['GET'])
-def get_conversation_history():
+@app.route('/api/history/<sender_id>', methods=['GET'])
+def get_conversation_history(sender_id):
     """ Get the current state / history of the conversation to enable reloading the webpage. """
-    sender_id = request.get_json()['sender']
 
     url = f'http://localhost:5005/conversations/{sender_id}/tracker'
-    result = rq.get(url)
-    print(result)
+    events = rq.get(url, json={'conversation_id': sender_id}).json()['events']
+    results = []
+
+    for event in events:
+        event_type = event['event']
+        if event_type == 'user':
+            results.append({
+                'event': 'user',
+                'text': event['text']
+            })
+        elif event_type == 'bot':
+            message = {'event': 'bot', 'text': event['text']}
+
+            data = event['data']
+            if data['buttons'] is not None:
+                message['buttons'] = data['buttons']
+            if data['custom'] is not None and 'score' in data['custom']:
+                message['score'] = data['custom']['score']
+
+            results.append(message)
+
+    return {'body': results}
 
 
 @app.route('/api/', methods=['POST'])

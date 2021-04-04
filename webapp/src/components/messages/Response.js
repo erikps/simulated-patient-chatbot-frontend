@@ -5,10 +5,10 @@ import { TextMessage } from "./TextMessage";
 // return a list of responses such as texts, buttons, etc. that are ready to be displayed.
 export function parseResponse(action, sendMessageCallback) {
   let buttons = <></>;
-  if (action?.quick_replies) {
+  if (action?.buttons) {
     buttons = (
       <div className="bot-item d-inline-flex flex-row justify-content-start">
-        {action.quick_replies.map(({ payload, title }) => (
+        {action.buttons.map(({ payload, title }) => (
           <ButtonResponse
             onClick={() => sendMessageCallback(payload)}
             title={title}
