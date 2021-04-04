@@ -76,6 +76,11 @@ table.table-fit tbody td, table.table-fit tfoot td {
   border-radius: 15px;
 }
 
+.chat-input input:disabled {
+  /* background-color: darkgray; */
+  opacity: 35%;
+}
+
 /*
 Responsive rules
 **/
@@ -90,7 +95,7 @@ Responsive rules
   .separator {
     width: 600px;
   }
-/* 
+  /* 
   .user-message {
     margin-left: 10em;
   }
