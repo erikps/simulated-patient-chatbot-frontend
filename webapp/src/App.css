@@ -78,7 +78,11 @@ table.table-fit tbody td, table.table-fit tfoot td {
 
 .chat-input input:disabled {
   /* background-color: darkgray; */
-  opacity: 35%;
+  opacity: 40%;
+}
+
+.chat-input button:disabled {
+  opacity: 40%;
 }
 
 /*
