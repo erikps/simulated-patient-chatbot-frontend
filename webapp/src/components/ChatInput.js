@@ -1,4 +1,4 @@
-import { React, Component } from "react";
+import React, { Component } from "react";
 
 // This component represents the chat input where the user can type messages.
 class ChatInput extends Component {
@@ -8,6 +8,8 @@ class ChatInput extends Component {
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+
+    this.inputRef = React.createRef();
   }
 
   handleChange(event) {
@@ -27,10 +29,15 @@ class ChatInput extends Component {
     event.preventDefault();
   }
 
+  focusInput() {
+    this.inputRef?.current?.focus();
+  }
+
   render() {
     return (
       <form className="d-flex" onSubmit={this.handleSubmit}>
         <input
+          ref={this.inputRef}
           className="mx-1"
           disabled={this.props.disabled}
           placeholder="Aa"

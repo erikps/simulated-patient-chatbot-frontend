@@ -19,13 +19,14 @@ class ChatWindow extends Component {
       usable: false,
     };
     this.connection = new SocketConnection((x) => this.addBotMessage(x));
-    this.chatEnd = React.createRef();
+    this.chatEndRef = React.createRef();
+    this.inputRef = React.createRef();
   }
 
   scrollDown() {
     // Ignore call while page is loading
-    if (!this.chatEnd) return;
-    this.chatEnd.current?.scrollIntoView();
+    if (!this.chatEndRef) return;
+    this.chatEndRef.current?.scrollIntoView();
   }
 
   addUserMessage(text) {
@@ -80,6 +81,8 @@ class ChatWindow extends Component {
       ...state,
       usable: true,
     }));
+    
+    this.inputRef.current.focusInput();
   }
 
   /**
@@ -101,7 +104,7 @@ class ChatWindow extends Component {
         <div className="d-flex flex-column chat-window">
           {this.state.messages}
         </div>
-        <div ref={this.chatEnd} className="spacer">
+        <div ref={this.chatEndRef} className="spacer">
           {/* This element is there to have some space on the bottom */}
         </div>
       </div>
@@ -119,7 +122,8 @@ class ChatWindow extends Component {
           {content}
           <div className="lower-half d-flex flex-column align-items-center justify-items start">
             <div className="container-md chat-input mt-1">
-              <ChatInput
+              <ChatInput 
+                ref={this.inputRef}
                 disabled={!this.state.usable}
                 onSubmit={(_e, value) => this.sendMessage(value)}
               />
