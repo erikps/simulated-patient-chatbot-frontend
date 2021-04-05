@@ -51,7 +51,7 @@ class ChatWindow extends Component {
       ...state,
       messages: [
         ...state.messages,
-        parseResponse(message, (value) => this.sendMessage(value)),
+        parseResponse(message, (value) => this.sendMessage(value), this.connection.sessionId),
       ],
     }));
     this.scrollDown();
@@ -84,7 +84,7 @@ class ChatWindow extends Component {
     
     this.inputRef.current.focusInput();
   }
-
+f
   /**
    * Send 'value' as a message via the socketio connection.
    */

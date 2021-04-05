@@ -1,4 +1,4 @@
-from flask import Flask, redirect, request, send_from_directory, render_template
+from flask import Flask, redirect, request, send_from_directory, render_template, Response
 from flask_cors import CORS
 import requests as rq
 import uuid
@@ -19,12 +19,53 @@ def serve_webapp():
     return render_template('index.html')
 
 
+def fetch_conversation_tracker(sender_id):
+    url = f'http://localhost:5005/conversations/{sender_id}/tracker'
+    return rq.get(url, json={'conversation_id': sender_id}).json()
+
+
+@app.route('/api/report/<sender_id>/<timestamp>', methods=['POST'])
+def post_report(sender_id, timestamp):
+
+    try:
+        tracker = fetch_conversation_tracker(sender_id)
+
+    except Exception as e:
+        return Response(status=404)
+
+    reports = set()
+
+    if 'slots' in tracker and 'reports' in tracker['slots'] and tracker['slots']['reports']:
+        reports = set(tracker['slots']['reports'])
+
+    if timestamp in reports:
+        # Check if the message was already reported.
+        # If so, return instantly
+        return Response(status=200)
+
+    reports.add(timestamp)
+
+    res = rq.post(f'http://localhost:5005/conversations/{sender_id}/tracker/events', json={
+        'event': 'slot',
+        'name': 'reports',
+        'value': list(reports)
+    })
+
+    if not res.ok:
+        return Response(status=400)
+
+    return Response(status=200)
+
+
 @app.route('/api/history/<sender_id>', methods=['GET'])
 def get_conversation_history(sender_id):
     """ Get the current state / history of the conversation to enable reloading the webpage. """
+    try:
+        events = fetch_conversation_tracker(sender_id)['events']
+    except Exception as e:
+        # Catches errors when conversation id does not exist or the backend server does not currently run.
+        return Response(status=404)
 
-    url = f'http://localhost:5005/conversations/{sender_id}/tracker'
-    events = rq.get(url, json={'conversation_id': sender_id}).json()['events']
     results = []
 
     for event in events:
@@ -35,7 +76,8 @@ def get_conversation_history(sender_id):
                 'text': event['text']
             })
         elif event_type == 'bot':
-            message = {'event': 'bot', 'text': event['text']}
+            message = {'event': 'bot',
+                       'text': event['text'], 'timestamp': event['timestamp']}
 
             data = event['data']
             if data['buttons'] is not None:
