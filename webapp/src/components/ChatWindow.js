@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { parseResponse } from "./messages/Response";
+import { Response } from "./messages/Response";
 import UserMessage from "./messages/UserMessage";
 import SocketConnection from "./SocketConnection";
 import ChatInput from "./ChatInput";
@@ -34,8 +34,11 @@ class ChatWindow extends Component {
       ...state,
       messages: [
         ...state.messages,
-        <div className="align-self-end user-item">
-          <UserMessage text={text} key={state.messageCount} />
+        <div
+          className="align-self-end user-item"
+          key={state.messages.length + 1}
+        >
+          <UserMessage text={text} />
         </div>,
       ],
     }));
@@ -51,7 +54,12 @@ class ChatWindow extends Component {
       ...state,
       messages: [
         ...state.messages,
-        parseResponse(message, (value) => this.sendMessage(value), this.connection.sessionId),
+        <Response
+          key={state.messages.length + 1}
+          action={message}
+          sendMessageCallback={(value) => this.sendMessage(value)}
+          senderId={this.connection.sessionId}
+        />,
       ],
     }));
     this.scrollDown();
@@ -81,10 +89,10 @@ class ChatWindow extends Component {
       ...state,
       usable: true,
     }));
-    
+
     this.inputRef.current.focusInput();
   }
-f
+  f;
   /**
    * Send 'value' as a message via the socketio connection.
    */
@@ -122,7 +130,7 @@ f
           {content}
           <div className="lower-half d-flex flex-column align-items-center justify-items start">
             <div className="container-md chat-input mt-1">
-              <ChatInput 
+              <ChatInput
                 ref={this.inputRef}
                 disabled={!this.state.usable}
                 onSubmit={(_e, value) => this.sendMessage(value)}

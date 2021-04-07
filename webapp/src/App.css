@@ -85,6 +85,10 @@ table.table-fit tbody td, table.table-fit tfoot td {
   opacity: 40%;
 }
 
+.bot-icon {
+  margin: 5px;
+}
+
 /*
 Responsive rules
 **/
@@ -94,6 +98,11 @@ Responsive rules
     /* width: 600px; */
     width: 600px;
     /* width: 0; */
+  }
+
+  .bot-icon {
+    /* width: 48px; */
+    /* width: 20px; */
   }
 
   .separator {
@@ -117,6 +126,11 @@ Responsive rules
     width: 100%;
     /* width: 0; */
   }
+
+  .bot-icon {
+    width: 32px;
+  }
+
   .separator {
     width: 90%;
   }
