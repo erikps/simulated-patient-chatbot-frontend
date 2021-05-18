@@ -2,9 +2,6 @@ import { React, Component } from "react";
 import { TextMessage } from "./TextMessage";
 
 export class UserMessage extends Component {
-  constructor(props) {
-    super(props);
-  }
 
   render() {
     return <TextMessage className="user-message" text={this.props.text} />;

@@ -1,21 +1,11 @@
-import { React, Component } from "react";
+import { React } from "react";
 
-export class TextMessage extends Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    return (
-      <div
-        className={
-          "message-background px-2 py-1 " + this.props.className
-        }
-      >
-        {this.props.text}
-      </div>
-    );
-  }
+export function TextMessage(props) {
+  return (
+    <div className={"message-background px-2 py-1 " + props.className}>
+      {props.text}
+    </div>
+  );
 }
 
 export default TextMessage;

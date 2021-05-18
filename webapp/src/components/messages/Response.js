@@ -29,7 +29,7 @@ export function Response(props) {
   let text = <></>;
   if (props.action?.text && props.action?.timestamp) {
     text = (
-      <div class="bot-item">
+      <div className="bot-item">
         <BotIcon className="" />
         <div className="d-flex flex-row align-items-start justify-content-start">
           <TextMessage className="bot-response" text={props.action.text} />
@@ -71,7 +71,8 @@ function ReportButton(props) {
 
     try {
       const result = await fetch(
-        "http://localhost:5000/api/report/" +
+        process.env.REACT_APP_API_ENDPOINT +
+          "report/" +
           props.senderId +
           "/" +
           props.timestamp,

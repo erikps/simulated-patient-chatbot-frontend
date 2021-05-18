@@ -1,3 +1,4 @@
+from logging import warn
 from flask import Flask, redirect, request, send_from_directory, render_template, Response
 from flask_cors import CORS
 import requests as rq
@@ -8,19 +9,16 @@ import os
 app = Flask(__name__, template_folder='static')
 CORS(app)
 
-
-@app.route('/')
-def index():
-    return redirect('app')
+RASA_ENDPOINT = 'http://localhost:5005/'
 
 
-@app.route('/app')
-def serve_webapp():
-    return render_template('index.html')
+@app.route('/health')
+def health():
+    return Response(status=200)
 
 
 def fetch_conversation_tracker(sender_id):
-    url = f'http://localhost:5005/conversations/{sender_id}/tracker'
+    url = f'{RASA_ENDPOINT}conversations/{sender_id}/tracker'
     return rq.get(url, json={'conversation_id': sender_id}).json()
 
 
@@ -45,7 +43,7 @@ def post_report(sender_id, timestamp):
 
     reports.add(timestamp)
 
-    res = rq.post(f'http://localhost:5005/conversations/{sender_id}/tracker/events', json={
+    res = rq.post(f'{RASA_ENDPOINT}conversations/{sender_id}/tracker/events', json={
         'event': 'slot',
         'name': 'reports',
         'value': list(reports)
@@ -60,6 +58,7 @@ def post_report(sender_id, timestamp):
 @app.route('/api/history/<sender_id>', methods=['GET'])
 def get_conversation_history(sender_id):
     """ Get the current state / history of the conversation to enable reloading the webpage. """
+
     try:
         events = fetch_conversation_tracker(sender_id)['events']
     except Exception as e:
@@ -88,23 +87,6 @@ def get_conversation_history(sender_id):
             results.append(message)
 
     return {'body': results}
-
-
-@app.route('/api/', methods=['POST'])
-def post_message():
-    """ Post a new message and get response from webserver. """
-    data = request.get_json()
-
-    body = {
-        'sender': data['sender'],
-        'message': data['message']
-    }
-    url = 'http://localhost:5005/webhooks/rest/webhook'
-    result = rq.post(url, json=body).json()
-
-    print(result)
-
-    return {'body': result}
 
 
 if __name__ == '__main__':

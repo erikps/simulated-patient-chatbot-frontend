@@ -1,8 +1,6 @@
 import { io } from "socket.io-client";
 import { v4 as uuidV4 } from "uuid";
 
-const ENDPOINT = process.env.REACT_APP_SOCKETIO_ENDPOINT;
-
 /**
  * Handles all SocketIO communication with the RASA backend.
  */
@@ -24,9 +22,7 @@ class SocketConnection {
     this.sessionId = sessionId;
 
     this.#onMessageReceived = onMessageReceived;
-    this.#client = io("http://localhost:5005", {
-      pathname: "/socket.io",
-    });
+    this.#client = io(process.env.REACT_APP_SOCKETIO_ENDPOINT);
 
     this.#client.on("session_confirm", (data) => {
       console.log("session_id: ", data);

@@ -6,7 +6,7 @@ import ChatInput from "./ChatInput";
 
 async function getHistory(senderId) {
   return await (
-    await fetch("http://localhost:5000/api/history/" + senderId)
+    await fetch(process.env.REACT_APP_API_ENDPOINT + "history/" + senderId)
   ).json();
 }
 
