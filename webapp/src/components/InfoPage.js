@@ -3,7 +3,7 @@ import "./InfoPage.css";
 
 function InfoPage(props) {
   return (
-    <div className="container text-bloc d-flex align-items-center flex-column pt-2">
+    <div className="container info-page d-flex align-items-center flex-column pt-2">
       <h1 className="pb-2">{props.title}</h1>
       <p className="pb-2">{props.content}</p>
       <Link

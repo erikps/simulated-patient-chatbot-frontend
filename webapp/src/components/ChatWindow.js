@@ -3,6 +3,7 @@ import { Response } from "./messages/Response";
 import UserMessage from "./messages/UserMessage";
 import SocketConnection from "./SocketConnection";
 import ChatInput from "./ChatInput";
+import Timer from "./Timer";
 
 async function getHistory(senderId) {
   return await (
@@ -17,7 +18,9 @@ class ChatWindow extends Component {
     this.state = {
       messages: [],
       usable: false,
+      startDate: null,
     };
+
     this.connection = new SocketConnection((x) => this.addBotMessage(x));
     this.chatEndRef = React.createRef();
     this.inputRef = React.createRef();
@@ -70,16 +73,16 @@ class ChatWindow extends Component {
    * Overrides messages state to contain all historic messages.
    */
   async restoreConversationHistory() {
+    // While restoring the conversation history the chat window should not be usable, i.e. grayed out.
     this.setState((state) => ({
       ...state,
       usable: false,
     }));
 
-    // TODO: implement
+    // Retrieve conversation history for the session id.
     const messages = (await getHistory(this.connection.sessionId)).body;
 
-    console.log(messages);
-
+    // Add historic messages to the ui, differentiating between bot and user messages.
     for (const message of messages) {
       if (message.event === "bot") this.addBotMessage(message);
       else if (message.event === "user") this.addUserMessage(message.text);
@@ -88,6 +91,7 @@ class ChatWindow extends Component {
     this.setState((state) => ({
       ...state,
       usable: true,
+      startDate: +new Date(),
     }));
 
     this.inputRef?.current?.focusInput();
@@ -122,10 +126,21 @@ class ChatWindow extends Component {
       </div>
     );
 
+    const timer = this.state.startDate ? (
+      <Timer
+        startTime={this.state.startDate}
+        maxTime={300000} // Maximum time of 5 minutes (given in seconds)
+        cutoff={3600000} // After 60 minutes negative, stop displaying the time (cover edge case)
+      />
+    ) : (
+      <></>
+    );
+
     return (
       <div>
         <div className="d-flex flex-column align-items-center">
           <h2 className="mv-4 mt-2">Chatbot</h2>
+          {timer}
           <hr className="mb-4 separator" />
           {content}
           <div className="lower-half d-flex flex-column align-items-center justify-items start">
