@@ -90,9 +90,9 @@ class ChatWindow extends Component {
       usable: true,
     }));
 
-    this.inputRef.current.focusInput();
+    this.inputRef?.current?.focusInput();
   }
-  f;
+
   /**
    * Send 'value' as a message via the socketio connection.
    */
