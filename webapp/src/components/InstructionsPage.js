@@ -20,7 +20,7 @@ function InstructionsPage(props) {
       title="Instructions"
       content={content}
       nextText="BEGIN"
-      nextLink="/#conversation"
+      nextLink="/conversation"
     />
   );
 }
