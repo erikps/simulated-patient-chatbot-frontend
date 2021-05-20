@@ -7,9 +7,10 @@ function InstructionsPage(props) {
       patient is 40 years old and is presenting with low back pain. This is the
       first time you have met this patient, but you know from the records that
       they do not consult the practice often.
-      <br/> <br/>
+      <br /> <br />
       Please take a focussed history.
-      <br/><br/>
+      <br />
+      <br />
       <b>You have five minutes.</b>
     </>
   );
@@ -19,7 +20,7 @@ function InstructionsPage(props) {
       title="Instructions"
       content={content}
       nextText="BEGIN"
-      nextLink="/conversation"
+      nextLink="/#conversation"
     />
   );
 }

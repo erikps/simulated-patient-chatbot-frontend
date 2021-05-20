@@ -22,7 +22,7 @@ function DisclaimerPage(props) {
       title="Disclaimer"
       content={disclaimerText}
       nextText="ACCEPT"
-      nextLink="/instructions"
+      nextLink="/#instructions"
     />
   );
 }

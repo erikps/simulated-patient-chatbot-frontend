@@ -10,18 +10,17 @@ function App() {
   return (
     <Router>
       <Switch>
-        <Route path="/instructions">
+        <Route path="/#instructions">
           <InstructionsPage />
         </Route>
 
-        <Route path="/conversation">
+        <Route path="/#conversation">
           <ChatWindow />
         </Route>
 
         <Route path="/">
           <DisclaimerPage />
         </Route>
-        
       </Switch>
     </Router>
   );
