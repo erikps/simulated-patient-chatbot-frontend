@@ -68,11 +68,18 @@ def get_conversation_history(sender_id):
     """ Get the current state / history of the conversation to enable reloading the webpage. """
 
     try:
-        events = fetch_conversation_tracker(sender_id)['events']
+        tracker = fetch_conversation_tracker(sender_id)
+        events = tracker['events']
     except Exception as e:
         app.logger.error("Couldn't retrieve tracker.")
         # Catches errors when conversation id does not exist or the backend server does not currently run.
         return Response(status=404)
+
+
+    slots = tracker['slots']
+    reports = []
+    if 'reports' in slots:
+        reports = list(map(float, slots['reports']))
 
     messages = []
 
@@ -97,7 +104,7 @@ def get_conversation_history(sender_id):
 
     timestamp = extract_starting_time(events)
 
-    return {'body': {'messages': messages, 'start_timestamp': timestamp}}
+    return {'body': {'messages': messages, 'start_timestamp': timestamp, 'reports': reports}}
 
 
 if __name__ == '__main__':

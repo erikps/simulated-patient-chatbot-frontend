@@ -54,8 +54,7 @@ class ChatWindow extends Component {
   /**
    * Adds 'message' as a bot response.
    */
-  addBotMessage(message) {
-    console.log(message);
+  addBotMessage(message, isReportDisabled) {
     this.setState((state) => ({
       ...state,
       messages: [
@@ -65,6 +64,7 @@ class ChatWindow extends Component {
           action={message}
           sendMessageCallback={(value) => this.sendMessage(value)}
           senderId={this.connection.sessionId}
+          isReportDisabled={isReportDisabled}
         />,
       ],
     }));
@@ -86,9 +86,12 @@ class ChatWindow extends Component {
     const body = (await getHistory(this.connection.sessionId)).body;
     const start_timestamp = body.start_timestamp * 1000; // Multiply by 1000 to
     const messages = body.messages;
+    const reports = body.reports;
+
     // Add historic messages to the ui, differentiating between bot and user messages.
     for (const message of messages) {
-      if (message.event === "bot") this.addBotMessage(message);
+      if (message.event === "bot")
+        this.addBotMessage(message, reports.includes(message.timestamp));
       else if (message.event === "user") this.addUserMessage(message.text);
     }
 
@@ -130,24 +133,17 @@ class ChatWindow extends Component {
       </div>
     );
 
-    const timer = 
-    // this.state.startDate ?
-     (
-      <Timer
-        startTime={this.state.startDate}
-        maxTime={MAX_TIME}
-        cutoff={CUTOFF_TIME}
-      />
-    // ) 
-    // : (
-    //   <></>
-    );
-
     return (
       <div>
         <div className="d-flex flex-column align-items-center">
-          <h2 className="mv-4 mt-2">Chatbot</h2>
-          {timer}
+          <h2 className="mv-4 mt-2">
+            Conversation #{this.connection.sessionId.slice(0, 8)}
+          </h2>
+          <Timer
+            startTime={this.state.startDate}
+            maxTime={MAX_TIME}
+            cutoff={CUTOFF_TIME}
+          />
           <hr className="mb-4 separator" />
           {content}
           <div className="lower-half d-flex flex-column align-items-center justify-items start">

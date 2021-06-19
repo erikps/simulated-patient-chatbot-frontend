@@ -24,10 +24,6 @@ class SocketConnection {
     this.#onMessageReceived = onMessageReceived;
     this.#client = io(process.env.REACT_APP_SOCKETIO_ENDPOINT);
 
-    this.#client.on("session_confirm", (data) => {
-      console.log("session_id: ", data);
-    });
-
     // Establish a session using the provided session id.
     // This is required, because session persistance is true in credentials.yml.
     this.#client.emit("session_request", { session_id: sessionId });
@@ -35,11 +31,9 @@ class SocketConnection {
     // 'bot_uttered' is the event name specified for bot actions in credentials.yml.
     this.#client.on("bot_uttered", this.#onMessageReceived);
 
-    console.log(this.#client);
   }
 
   sendMessage(message) {
-    console.log(message);
     // 'user_uttered' is the event name specified for user utterances in credentials.yml.
     this.#client.emit("user_uttered", { message, session_id: this.sessionId });
   }
