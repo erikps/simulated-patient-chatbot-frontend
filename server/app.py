@@ -75,11 +75,11 @@ def get_conversation_history(sender_id):
         # Catches errors when conversation id does not exist or the backend server does not currently run.
         return Response(status=404)
 
-
-    slots = tracker['slots']
     reports = []
-    if 'reports' in slots:
-        reports = list(map(float, slots['reports']))
+    if 'slots' in tracker:
+        slots = tracker['slots']
+        if 'reports' in slots and slots['reports']:    
+                reports = list(map(float, slots['reports']))
 
     messages = []
 
