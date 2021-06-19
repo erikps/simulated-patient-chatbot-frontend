@@ -22,6 +22,14 @@ def fetch_conversation_tracker(sender_id):
     return rq.get(url, json={'conversation_id': sender_id}).json()
 
 
+def extract_starting_time(events):
+    """ Extracts the latest conversation start time from the provided tracker (dictionary from json). """
+    session_start_events = filter(
+        lambda x: 'name' in x and x['name'] == 'action_session_start', events)
+    timestamps = map(lambda x: x['timestamp'], session_start_events)
+    return max(timestamps)
+
+
 @app.route('/api/report/<sender_id>/<timestamp>', methods=['POST'])
 def post_report(sender_id, timestamp):
 
@@ -62,15 +70,16 @@ def get_conversation_history(sender_id):
     try:
         events = fetch_conversation_tracker(sender_id)['events']
     except Exception as e:
+        app.logger.error("Couldn't retrieve tracker.")
         # Catches errors when conversation id does not exist or the backend server does not currently run.
         return Response(status=404)
 
-    results = []
+    messages = []
 
     for event in events:
         event_type = event['event']
         if event_type == 'user':
-            results.append({
+            messages.append({
                 'event': 'user',
                 'text': event['text']
             })
@@ -84,9 +93,11 @@ def get_conversation_history(sender_id):
             if data['custom'] is not None and 'score' in data['custom']:
                 message['score'] = data['custom']['score']
 
-            results.append(message)
+            messages.append(message)
 
-    return {'body': results}
+    timestamp = extract_starting_time(events)
+
+    return {'body': {'messages': messages, 'start_timestamp': timestamp}}
 
 
 if __name__ == '__main__':

@@ -12,10 +12,11 @@ function formatMillisecondsAsMinuteSeconds(milliseconds) {
 }
 
 function Timer(props) {
-  const [timeLeft, setTimeLeft] = useState(props.maxTime);
+  const [timeLeft, setTimeLeft] = useState(null);
 
   useEffect(() => {
     function calculateTime() {
+      if (!props.startTime) return null;
       const time = +props.startTime - +new Date() + props.maxTime;
       return time;
     }
@@ -24,16 +25,37 @@ function Timer(props) {
     }, 1000);
   }, [timeLeft, props.startTime, props.maxTime]);
 
+  const stopped = timeLeft < -props.cutoff; // Has the clock stopped due to going over the cutoff time?
+
+  const content =
+    timeLeft && props.startTime ? (
+      <>
+        <b style={{ marginRight: ".25em" }}>
+          {stopped
+            ? "-" +
+              formatMillisecondsAsMinuteSeconds(props.cutoff) +
+              " (Stopped)"
+            : formatMillisecondsAsMinuteSeconds(timeLeft)}
+        </b>
+      </>
+    ) : (
+      <>
+        {/* Display this wile loading */}
+        <b>--:--</b>
+      </>
+    );
+
   return (
-    <b
+    <div
+      className="d-flex flex-inline"
       style={{
-        backgroundColor: timeLeft > 0 ? "lightgrey" : "#fc8b83",
+        backgroundColor: !timeLeft || timeLeft > 0 ? "lightgrey" : "#fc8b83",
         borderRadius: "1em",
         padding: "0em .5em",
       }}
     >
-      {timeLeft < -props.cutoff ? "XX:XX": formatMillisecondsAsMinuteSeconds(timeLeft)}
-    </b>
+      {content}
+    </div>
   );
 }
 

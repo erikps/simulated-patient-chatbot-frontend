@@ -5,6 +5,9 @@ import SocketConnection from "./SocketConnection";
 import ChatInput from "./ChatInput";
 import Timer from "./Timer";
 
+const MAX_TIME = 300000; // Maximum time of 5 minutes (given in seconds)
+const CUTOFF_TIME = 3600000; // After 60 minutes negative, stop displaying the time (cover edge case)
+
 async function getHistory(senderId) {
   return await (
     await fetch(process.env.REACT_APP_API_ENDPOINT + "history/" + senderId)
@@ -80,8 +83,9 @@ class ChatWindow extends Component {
     }));
 
     // Retrieve conversation history for the session id.
-    const messages = (await getHistory(this.connection.sessionId)).body;
-
+    const body = (await getHistory(this.connection.sessionId)).body;
+    const start_timestamp = body.start_timestamp * 1000; // Multiply by 1000 to
+    const messages = body.messages;
     // Add historic messages to the ui, differentiating between bot and user messages.
     for (const message of messages) {
       if (message.event === "bot") this.addBotMessage(message);
@@ -91,7 +95,7 @@ class ChatWindow extends Component {
     this.setState((state) => ({
       ...state,
       usable: true,
-      startDate: +new Date(),
+      startDate: start_timestamp,
     }));
 
     this.inputRef?.current?.focusInput();
@@ -126,14 +130,17 @@ class ChatWindow extends Component {
       </div>
     );
 
-    const timer = this.state.startDate ? (
+    const timer = 
+    // this.state.startDate ?
+     (
       <Timer
         startTime={this.state.startDate}
-        maxTime={300000} // Maximum time of 5 minutes (given in seconds)
-        cutoff={3600000} // After 60 minutes negative, stop displaying the time (cover edge case)
+        maxTime={MAX_TIME}
+        cutoff={CUTOFF_TIME}
       />
-    ) : (
-      <></>
+    // ) 
+    // : (
+    //   <></>
     );
 
     return (
