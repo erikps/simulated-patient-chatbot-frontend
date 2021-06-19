@@ -78,8 +78,8 @@ def get_conversation_history(sender_id):
     reports = []
     if 'slots' in tracker:
         slots = tracker['slots']
-        if 'reports' in slots and slots['reports']:    
-                reports = list(map(float, slots['reports']))
+        if 'reports' in slots and slots['reports']:
+            reports = list(map(float, slots['reports']))
 
     messages = []
 
