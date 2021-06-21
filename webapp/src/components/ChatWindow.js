@@ -4,6 +4,7 @@ import UserMessage from "./messages/UserMessage";
 import SocketConnection from "./SocketConnection";
 import ChatInput from "./ChatInput";
 import Timer from "./Timer";
+import ErrorPage from "./ErrorPage";
 
 const MAX_TIME = 300000; // Maximum time of 5 minutes (given in seconds)
 const CUTOFF_TIME = 3600000; // After 60 minutes negative, stop displaying the time (cover edge case)
@@ -22,6 +23,7 @@ class ChatWindow extends Component {
       messages: [],
       usable: false,
       startDate: null,
+      loadFailed: false,
     };
 
     this.connection = new SocketConnection((x) => this.addBotMessage(x));
@@ -55,6 +57,7 @@ class ChatWindow extends Component {
    * Adds 'message' as a bot response.
    */
   addBotMessage(message, isReportDisabled) {
+    console.log(message);
     this.setState((state) => ({
       ...state,
       messages: [
@@ -83,8 +86,21 @@ class ChatWindow extends Component {
     }));
 
     // Retrieve conversation history for the session id.
-    const body = (await getHistory(this.connection.sessionId)).body;
-    const start_timestamp = body.start_timestamp * 1000; // Multiply by 1000 to
+    let res = undefined;
+    try {
+      res = await getHistory(this.connection.sessionId);
+
+    } catch (error) {
+      console.log(error);
+      this.setState((state) => ({
+        ...state,
+        loadFailed: true,
+      }));
+      return;
+    }
+
+    const body = res.body;
+    const startTimestamp = body.start_timestamp * 1000; // Multiply by 1000 to
     const messages = body.messages;
     const reports = body.reports;
 
@@ -98,7 +114,7 @@ class ChatWindow extends Component {
     this.setState((state) => ({
       ...state,
       usable: true,
-      startDate: start_timestamp,
+      startDate: startTimestamp,
     }));
 
     this.inputRef?.current?.focusInput();
@@ -118,6 +134,11 @@ class ChatWindow extends Component {
   }
 
   render() {
+    // In the case of repeated failure to connect, display an error page.
+    if (this.state.loadFailed) {
+      return <ErrorPage errorCode="404"></ErrorPage>;
+    }
+
     const content = this.state.usable ? (
       <div className="container d-flex flex-column align-items-center">
         <div className="d-flex flex-column chat-window">
