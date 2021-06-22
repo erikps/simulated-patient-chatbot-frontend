@@ -38,6 +38,8 @@ class ChatWindow extends Component {
   }
 
   addUserMessage(text) {
+    // Hide user messages that begin with a '/' i.e. messages that are interpreted as literal intents
+    if (text.startsWith("/")) return;
     this.setState((state) => ({
       ...state,
       messages: [
@@ -89,7 +91,6 @@ class ChatWindow extends Component {
     let res = undefined;
     try {
       res = await getHistory(this.connection.sessionId);
-
     } catch (error) {
       console.log(error);
       this.setState((state) => ({
@@ -156,17 +157,20 @@ class ChatWindow extends Component {
 
     return (
       <div>
-        <div className="d-flex flex-column align-items-center">
-          <h2 className="mv-4 mt-2">
-            Conversation #{this.connection.sessionId.slice(0, 8)}
-          </h2>
-          <Timer
-            startTime={this.state.startDate}
-            maxTime={MAX_TIME}
-            cutoff={CUTOFF_TIME}
-          />
-          <hr className="mb-4 separator" />
-          {content}
+        <div>
+          <div className="d-flex fixed-top bg-white flex-column align-items-center">
+            <h2 className="mv-4 mt-2">
+              Conversation #{this.connection.sessionId.slice(0, 8)}
+            </h2>
+            <Timer
+              startTime={this.state.startDate}
+              maxTime={MAX_TIME}
+              cutoff={CUTOFF_TIME}
+            />
+            <hr className="-mb-4 separator" />
+          </div>
+          <div style={{ height: "60px" }}></div>
+          <div className="d-flex flex-column align-items-center">{content}</div>
           <div className="lower-half d-flex flex-column align-items-center justify-items start">
             <div className="container-md chat-input mt-1">
               <ChatInput

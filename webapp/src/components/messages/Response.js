@@ -65,6 +65,9 @@ function BotIcon(props) {
   );
 }
 
+/**
+ * Button to the side of each bot text response that lets the user report the bot's response so that it can be improved.
+ */
 function ReportButton(props) {
   const [pressed, setPressed] = useState(props.isDisabled);
 

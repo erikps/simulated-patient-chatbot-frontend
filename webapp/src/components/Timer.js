@@ -40,7 +40,7 @@ function Timer(props) {
       </>
     ) : (
       <>
-        {/* Display this wile loading */}
+        {/* Display this while loading */}
         <b>--:--</b>
       </>
     );
@@ -49,7 +49,7 @@ function Timer(props) {
     <div
       className="d-flex flex-inline"
       style={{
-        backgroundColor: !timeLeft || timeLeft > 0 ? "lightgrey" : "#fc8b83",
+        backgroundColor: !timeLeft || timeLeft > 0 ? "lightgrey" : "#fc8b83", // Have background change color if time runs out
         borderRadius: "1em",
         padding: "0em .5em",
       }}
