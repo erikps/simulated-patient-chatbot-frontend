@@ -9,13 +9,18 @@ import ErrorPage from "./ErrorPage";
 const MAX_TIME = 300000; // Maximum time of 5 minutes (given in seconds)
 const CUTOFF_TIME = 3600000; // After 60 minutes negative, stop displaying the time (cover edge case)
 
+/**
+ * Retrieve conversation history (messages, reports) from the Flask HTTP api.
+ */
 async function getHistory(senderId) {
   return await (
     await fetch(process.env.REACT_APP_API_ENDPOINT + "history/" + senderId)
   ).json();
 }
 
-// The chat window, including the previous messages and the chat text input.
+/**
+ * The chat window, including the previous messages and the chat text input.
+ */
 class ChatWindow extends Component {
   constructor(props) {
     super(props);
@@ -31,12 +36,16 @@ class ChatWindow extends Component {
     this.inputRef = React.createRef();
   }
 
+  /** Scroll down to the latest chat message. */
   scrollDown() {
     // Ignore call while page is loading
     if (!this.chatEndRef) return;
     this.chatEndRef.current?.scrollIntoView();
   }
 
+  /** Add the string 'text' as user message to display it.
+   *  Analogous to addBotMessage.
+   */
   addUserMessage(text) {
     // Hide user messages that begin with a '/' i.e. messages that are interpreted as literal intents
     if (text.startsWith("/")) return;
@@ -55,8 +64,9 @@ class ChatWindow extends Component {
     this.scrollDown();
   }
 
-  /**
-   * Adds 'message' as a bot response.
+  /** Adds 'message' as a bot response to display it.
+   *  The message can be any valid response object stemming from the RASA chatbot, e.g. text, buttons, etc.
+   *  Analogous to addUserMessage.
    */
   addBotMessage(message, isReportDisabled) {
     console.log(message);
@@ -79,6 +89,7 @@ class ChatWindow extends Component {
   /**
    * Load the conversation history from the server via HTTP.
    * Overrides messages state to contain all historic messages.
+   * Additionally
    */
   async restoreConversationHistory() {
     // While restoring the conversation history the chat window should not be usable, i.e. grayed out.
@@ -92,7 +103,7 @@ class ChatWindow extends Component {
     try {
       res = await getHistory(this.connection.sessionId);
     } catch (error) {
-      console.log(error);
+      // If there is a connection error, set flag to display error page.
       this.setState((state) => ({
         ...state,
         loadFailed: true,
@@ -122,7 +133,7 @@ class ChatWindow extends Component {
   }
 
   /**
-   * Send 'value' as a message via the socketio connection.
+   * Send the string 'value' as a message via the socketio connection.
    */
 
   sendMessage(value) {
@@ -137,7 +148,7 @@ class ChatWindow extends Component {
   render() {
     // In the case of repeated failure to connect, display an error page.
     if (this.state.loadFailed) {
-      return <ErrorPage errorCode="404"></ErrorPage>;
+      return <ErrorPage></ErrorPage>;
     }
 
     const content = this.state.usable ? (
@@ -169,7 +180,7 @@ class ChatWindow extends Component {
             />
             <hr className="-mb-4 separator" />
           </div>
-          <div style={{ height: "60px" }}></div>
+          <div style={{ height: "115px" }}></div>
           <div className="d-flex flex-column align-items-center">{content}</div>
           <div className="lower-half d-flex flex-column align-items-center justify-items start">
             <div className="container-md chat-input mt-1">
